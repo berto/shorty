@@ -1,18 +1,21 @@
 package main
 
 import (
-	"net/http"
+	"os"
 
-	"github.com/gin-gonic/gin"
+	"github.com/joho/godotenv"
+
+	"github.com/berto/shorty/api"
 )
 
 func main() {
-	app := gin.Default()
-	app.GET("/welcome", func(c *gin.Context) {
-		firstname := c.DefaultQuery("firstname", "Guest")
-		lastname := c.Query("lastname") // shortcut for c.Request.URL.Query().Get("lastname")
+	err := godotenv.Load()
+	if err != nil {
+		panic(err)
+	}
 
-		c.String(http.StatusOK, "Hello %s %s", firstname, lastname)
-	})
-	app.Run(":8080")
+	port := os.Getenv("PORT")
+
+	app := api.SetupRouter()
+	app.Run(":" + port)
 }
